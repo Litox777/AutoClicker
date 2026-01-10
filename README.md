@@ -26,8 +26,11 @@ pip install -r requirements.txt
 
 <details>
   <summary><code>MacOs/Linux</code></summary>
-  
-```python
+
+```bash
+# Install python-tk (required for GUI)
+brew install python-tk@3.11
+
 # Install the Virtual Enviroment
 python3 -m venv .venv
 
