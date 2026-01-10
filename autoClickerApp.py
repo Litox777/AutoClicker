@@ -1,18 +1,15 @@
-import mouse
 import time
 import tkinter as tk
 from tkinter import ttk
 import pyautogui
 import threading
-import pynput
-import PIL
 from pynput import keyboard
 
 # Variable
 running = True
 working = False
 clickerSpeed = "1"
-mousePos = mouse.get_position()
+mousePos = pyautogui.position()
 
 def on_key_release(k):
     if isinstance(k, keyboard.Key):
@@ -21,7 +18,7 @@ def on_key_release(k):
             global mousePos
             global posX
             global posY
-            mousePos = mouse.get_position()
+            mousePos = pyautogui.position()
             posX.set(mousePos[0])
             posY.set(mousePos[1])        
 
@@ -37,8 +34,6 @@ def on_key_release(k):
                 working = True
                 startButton.config(state="disabled")
                 stopButton.config(state="active")
-listener = keyboard.Listener(on_release = on_key_release)
-listener.start()
 
 def startAutoClicker():
     global working
@@ -60,27 +55,27 @@ def autoClicker(*args):
     global clickerSpeed
     global optionPos
 
-    while running:    
+    while running:
         if working:
             if optionPos.get() == 1:
                 if timesTypeVar.get() == "Single":
-                    mouse.click(mouseTypeVar.get().lower())
+                    pyautogui.click(button=mouseTypeVar.get().lower())
 
                 elif timesTypeVar.get() == "Double":
-                    mouse.double_click(mouseTypeVar.get().lower())
+                    pyautogui.doubleClick(button=mouseTypeVar.get().lower())
 
                 time.sleep(1/clickerSpeed)
 
             elif optionPos.get() == 0:
-                mouse.move(posX.get(), posY.get())
+                pyautogui.moveTo(posX.get(), posY.get())
                 if timesTypeVar.get() == "Single":
-                    mouse.click(mouseTypeVar.get().lower())
+                    pyautogui.click(button=mouseTypeVar.get().lower())
 
                 elif timesTypeVar.get() == "Double":
-                    mouse.double_click(mouseTypeVar.get().lower())
-                
+                    pyautogui.doubleClick(button=mouseTypeVar.get().lower())
+
                 time.sleep(1/clickerSpeed)
-        else: 
+        else:
             time.sleep(0.1)
 
 def changeValue(*args):
@@ -199,5 +194,9 @@ startText.pack()
 autoClickerThread = threading.Thread(target=autoClicker)
 autoClickerThread.daemon = True
 autoClickerThread.start()
+
+# Start keyboard listener AFTER tkinter is initialized (required for macOS)
+listener = keyboard.Listener(on_release=on_key_release)
+listener.start()
 
 root.mainloop()
